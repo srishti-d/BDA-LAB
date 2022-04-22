@@ -1,0 +1,95 @@
+Program 1. Perform the following DB operations using Cassandra.
+1. Create a key space by name Employee
+cqlsh> CREATE KEYSPACE employee123 WITH REPLICATION = {'class':'SimpleStrategy','replication_factor':1};
+
+2. Create a column family by name Employee-Info with attributes Emp_Id Primary Key, Emp_Name, Designation, Date_of_Joining, Salary, Dept_Name
+cqlsh:employee123> CREATE TABLE EMPLOYEEINFO( EMPID INT PRIMARY KEY, EMPNAME TEXT, DESIGNATION TEXT, DATEOFJOINING TIMESTAMP, SALARY DOUBLE, DEPTNAME TEXT);
+
+3. Insert the values into the table in batch
+cqlsh:employee123> BEGIN BATCH
+               ... INSERT INTO EMPLOYEEINFO (EMPID, EMPNAME, DESIGNATION, DATEOFJOINING, SALARY, DEPTNAME)
+               ... VALUES(1,'ABHISHEK','ASSISTANT MANAGER', '2010-04-26', 75000, 'MARKETING')
+               ... INSERT INTO EMPLOYEEINFO (EMPID, EMPNAME, DESIGNATION, DATEOFJOINING, SALARY, DEPTNAME)
+               ... VALUES(2,'BHASKAR','ASSISTANT MANAGER', '2010-04-26', 75000, 'MARKETING')
+               ... INSERT INTO EMPLOYEEINFO (EMPID, EMPNAME, DESIGNATION, DATEOFJOINING, SALARY, DEPTNAME)
+               ... VALUES(3,'CHIRAG','ASSISTANT MANAGER', '2010-04-26', 75000, 'MARKETING')
+               ... INSERT INTO EMPLOYEEINFO (EMPID, EMPNAME, DESIGNATION, DATEOFJOINING, SALARY, DEPTNAME)
+               ... VALUES(4,'DHANUSH','ASSISTANT MANAGER', '2010-04-26', 75000, 'MARKETING')
+               ... INSERT INTO EMPLOYEEINFO (EMPID, EMPNAME, DESIGNATION, DATEOFJOINING, SALARY, DEPTNAME)
+               ... VALUES(5,'ESHAAN','ASSISTANT MANAGER', '2010-04-26', 85000, 'TECHNICAL')
+               ... INSERT INTO EMPLOYEEINFO (EMPID, EMPNAME, DESIGNATION, DATEOFJOINING, SALARY, DEPTNAME)
+               ... VALUES(6,'FARAH','MANAGER', '2010-04-26', 95000, 'TECHNICAL')
+               ... INSERT INTO EMPLOYEEINFO (EMPID, EMPNAME, DESIGNATION, DATEOFJOINING, SALARY, DEPTNAME)
+               ... VALUES(7,'GEMMA','MANAGER', '2010-04-26', 95000, 'PR')
+               ... INSERT INTO EMPLOYEEINFO (EMPID, EMPNAME, DESIGNATION, DATEOFJOINING, SALARY, DEPTNAME)
+               ... VALUES(121,'HARRY','REGIONAL MANAGER', '2010-04-26', 99000, 'MANAGEMENT')
+               ... APPLY BATCH;
+cqlsh:employee123> SELECT * FROM EMPLOYEEINFO;
+
+empid | dateofjoining                   | deptname  | designation       | empname  | salary
+-------+---------------------------------+-----------+-------------------+----------+--------
+     5 | 2010-04-25 18:30:00.000000+0000 | TECHNICAL | ASSISTANT MANAGER |   ESHAAN |  85000
+     1 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER | ABHISHEK |  75000
+     2 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER |  BHASKAR |  75000
+     4 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER |  DHANUSH |  75000
+   121 | 2010-04-25 18:30:00.000000+0000 | MANAGEMENT |  REGIONAL MANAGER |    HARRY |  99000
+     7 | 2010-04-25 18:30:00.000000+0000 |        PR |           MANAGER |    GEMMA |  95000
+     6 | 2010-04-25 18:30:00.000000+0000 | TECHNICAL |           MANAGER |    FARAH |  95000
+     3 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER |   CHIRAG |  75000
+
+
+
+4. Update Employee name and Department of Emp-Id 121
+cqlsh:employee123> UPDATE EMPLOYEEINFO SET EMPNAME='HARISH', DEPTNAME='PR' WHERE EMPID=121;
+cqlsh:employee123> SELECT * FROM EMPLOYEEINFO;
+
+ empid | dateofjoining                   | deptname  | designation       | empname  | salary
+-------+---------------------------------+-----------+-------------------+----------+--------
+     5 | 2010-04-25 18:30:00.000000+0000 | TECHNICAL | ASSISTANT MANAGER |   ESHAAN |  85000
+     1 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER | ABHISHEK |  75000
+     2 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER |  BHASKAR |  75000
+     4 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER |  DHANUSH |  75000
+   121 | 2010-04-25 18:30:00.000000+0000 |        PR |  REGIONAL MANAGER |   HARISH |  99000
+     7 | 2010-04-25 18:30:00.000000+0000 |        PR |           MANAGER |    GEMMA |  95000
+     6 | 2010-04-25 18:30:00.000000+0000 | TECHNICAL |           MANAGER |    FARAH |  95000
+     3 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER |   CHIRAG |  75000
+
+5. Sort the details of Employee records based on salary
+6. Alter the schema of the table Employee_Info to add a column Projects which stores a set of Projects done by the corresponding Employee.
+cqlsh:employee123> ALTER TABLE EMPLOYEEINFO ADD PROJECTS LIST<TEXT>;
+cqlsh:employee123> SELECT * FROM EMPLOYEEINFO;
+
+ empid | dateofjoining                   | deptname  | designation       | empname  | projects | salary
+-------+---------------------------------+-----------+-------------------+----------+----------+--------
+     5 | 2010-04-25 18:30:00.000000+0000 | TECHNICAL | ASSISTANT MANAGER |   ESHAAN |     null |  85000
+     1 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER | ABHISHEK |     null |  75000
+     2 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER |  BHASKAR |     null |  75000
+     4 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER |  DHANUSH |     null |  75000
+   121 | 2010-04-25 18:30:00.000000+0000 |        PR |  REGIONAL MANAGER |   HARISH |     null |  99000
+     7 | 2010-04-25 18:30:00.000000+0000 |        PR |           MANAGER |    GEMMA |     null |  95000
+     6 | 2010-04-25 18:30:00.000000+0000 | TECHNICAL |           MANAGER |    FARAH |     null |  95000
+     3 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER |   CHIRAG |     null |  75000
+
+7. Update the altered table to add project names.
+cqlsh:employee123> UPDATE EMPLOYEEINFO SET PROJECTS=['FACEBOOK','SNAPCHAT'] WHERE EMPID=1;
+cqlsh:employee123> UPDATE EMPLOYEEINFO SET PROJECTS=['FACEBOOK','SNAPCHAT'] WHERE EMPID=7;
+cqlsh:employee123> UPDATE EMPLOYEEINFO SET PROJECTS=['PINTEREST','INSTAGRAM'] WHERE EMPID=121;
+cqlsh:employee123> UPDATE EMPLOYEEINFO SET PROJECTS=['PINTEREST','INSTAGRAM'] WHERE EMPID=4;
+cqlsh:employee123> UPDATE EMPLOYEEINFO SET PROJECTS=['YOUTUBE','SPOTIFY'] WHERE EMPID=2;
+cqlsh:employee123> UPDATE EMPLOYEEINFO SET PROJECTS=['YOUTUBE','SPOTIFY'] WHERE EMPID=3;
+cqlsh:employee123> UPDATE EMPLOYEEINFO SET PROJECTS=['YOUTUBE','SPOTIFY'] WHERE EMPID=6;
+cqlsh:employee123> UPDATE EMPLOYEEINFO SET PROJECTS=['TWITTER','REDDIT'] WHERE EMPID=5;
+cqlsh:employee123> SELECT * FROM EMPLOYEEINFO;
+
+ empid | dateofjoining                   | deptname  | designation       | empname  | projects                   | salary
+-------+---------------------------------+-----------+-------------------+----------+----------------------------+--------
+     5 | 2010-04-25 18:30:00.000000+0000 | TECHNICAL | ASSISTANT MANAGER |   ESHAAN |      ['TWITTER', 'REDDIT'] |  85000
+     1 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER | ABHISHEK |   ['FACEBOOK', 'SNAPCHAT'] |  75000
+     2 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER |  BHASKAR |     ['YOUTUBE', 'SPOTIFY'] |  75000
+     4 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER |  DHANUSH | ['PINTEREST', 'INSTAGRAM'] |  75000
+   121 | 2010-04-25 18:30:00.000000+0000 |        PR |  REGIONAL MANAGER |   HARISH | ['PINTEREST', 'INSTAGRAM'] |  99000
+     7 | 2010-04-25 18:30:00.000000+0000 |        PR |           MANAGER |    GEMMA |   ['FACEBOOK', 'SNAPCHAT'] |  95000
+     6 | 2010-04-25 18:30:00.000000+0000 | TECHNICAL |           MANAGER |    FARAH |     ['YOUTUBE', 'SPOTIFY'] |  95000
+     3 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER |   CHIRAG |     ['YOUTUBE', 'SPOTIFY'] |  75000
+
+8 Create a TTL of 15 seconds to display the values of Employees.
