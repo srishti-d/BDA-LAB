@@ -55,6 +55,8 @@ cqlsh:employee123> SELECT * FROM EMPLOYEEINFO;
      3 | 2010-04-25 18:30:00.000000+0000 | MARKETING | ASSISTANT MANAGER |   CHIRAG |  75000
 
 5. Sort the details of Employee records based on salary
+select * from employee_in where emp_id IN(1,2,3,4) ORDER BY salary DESC allow filtering;
+
 6. Alter the schema of the table Employee_Info to add a column Projects which stores a set of Projects done by the corresponding Employee.
 cqlsh:employee123> ALTER TABLE EMPLOYEEINFO ADD PROJECTS LIST<TEXT>;
 cqlsh:employee123> SELECT * FROM EMPLOYEEINFO;
