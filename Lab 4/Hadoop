@@ -1,0 +1,75 @@
+hduser@bmsce-Precision-T1700:~$ sudo su hduser
+[sudo] password for hduser: 
+hduser@bmsce-Precision-T1700:~$ start-all.sh
+This script is Deprecated. Instead use start-dfs.sh and start-yarn.sh
+Starting namenodes on [localhost]
+hduser@localhost's password: 
+localhost: namenode running as process 9851. Stop it first.
+hduser@localhost's password: 
+localhost: datanode running as process 10030. Stop it first.
+Starting secondary namenodes [0.0.0.0]
+hduser@0.0.0.0's password: 
+0.0.0.0: secondarynamenode running as process 10245. Stop it first.
+starting yarn daemons
+resourcemanager running as process 10404. Stop it first.
+hduser@localhost's password: 
+localhost: nodemanager running as process 10737. Stop it first.
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -put /Downloads/hello.txt /abcd/
+put: `/Downloads/hello.txt': No such file or directory
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -put /home/hduser/Downloads/hello.txt /abcd/ 
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -ls /abcd 
+Found 2 items
+-rw-r--r--   1 hduser supergroup         12 2022-06-03 12:31 /abcd/hello.txt
+-rw-r--r--   1 hduser supergroup         19 2022-06-03 12:05 /abcd/newfile.txt
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -cat /abcd/hello.txt 
+hello world
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -get /abcd/hello.txt /home/hduser/Downloads/helloagain.txt
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -mv /home/hduser/Downloads/helloagain.txt /abcd/hellothrice.txt
+mv: `/home/hduser/Downloads/helloagain.txt': No such file or directory
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -mv /home/hduser/Downloads/hello.txt /abcd/hellothrice.txt
+mv: `/home/hduser/Downloads/hello.txt': No such file or directory
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -ls /abc
+-rw-r--r--   1 hduser supergroup         19 2022-05-31 10:31 /abc
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -ls /
+Found 11 items
+drwxr-xr-x   - hduser supergroup          0 2022-06-01 09:37 /172
+drwxr-xr-x   - hduser supergroup          0 2022-06-01 15:02 /NewPremSai
+drwxr-xr-x   - hduser supergroup          0 2022-06-01 14:58 /PremSai
+-rw-r--r--   1 hduser supergroup         19 2022-05-31 10:31 /abc
+drwxr-xr-x   - hduser supergroup          0 2022-06-03 12:31 /abcd
+drwxr-xr-x   - hduser supergroup          0 2022-05-31 10:25 /cds
+drwxr-xr-x   - hduser supergroup          0 2022-06-01 09:36 /new
+drwxr-xr-x   - hduser supergroup          0 2022-05-31 09:46 /punit
+drwxr-xr-x   - hduser supergroup          0 2022-06-01 10:12 /tasmiya
+drwxrwxr-x   - hduser supergroup          0 2019-08-01 16:19 /tmp
+drwxr-xr-x   - hduser supergroup          0 2019-08-01 16:03 /user
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -ls /new
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -mkdir /sneha
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -mv /abcd/hellothrice.txt /sneha
+mv: `/abcd/hellothrice.txt': No such file or directory
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -mv /abcd/hello.txt /sneha
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -ls /sneha
+Found 1 items
+-rw-r--r--   1 hduser supergroup         12 2022-06-03 12:31 /sneha/hello.txt
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -ls /abcd
+Found 1 items
+-rw-r--r--   1 hduser supergroup         19 2022-06-03 12:05 /abcd/newfile.txt
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -cp /sneha/hello.txt /abcd/hi.txt
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -ls /abcd
+Found 2 items
+-rw-r--r--   1 hduser supergroup         12 2022-06-03 12:44 /abcd/hi.txt
+-rw-r--r--   1 hduser supergroup         19 2022-06-03 12:05 /abcd/newfile.txt
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -ls /sneha
+Found 1 items
+-rw-r--r--   1 hduser supergroup         12 2022-06-03 12:31 /sneha/hello.txt
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -copyFromLocal /home/hduser/Downloads/hello.txt /abcd/hellohello.txt
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -ls /abcd
+Found 3 items
+-rw-r--r--   1 hduser supergroup         12 2022-06-03 12:49 /abcd/hellohello.txt
+-rw-r--r--   1 hduser supergroup         12 2022-06-03 12:44 /abcd/hi.txt
+-rw-r--r--   1 hduser supergroup         19 2022-06-03 12:05 /abcd/newfile.txt
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -copyToLocal /sneha/hii.txt /home/hduser/Downloads/hello.txt 
+copyToLocal: `/home/hduser/Downloads/hello.txt': File exists
+hduser@bmsce-Precision-T1700:~$ hdfs dfs -copyToLocal /sneha/hello.txt /home/hduser/Downloads/hiii.txt 
+hduser@bmsce-Precision-T1700:~$ 
+
