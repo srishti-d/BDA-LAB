@@ -1,0 +1,94 @@
+Find Maximum Value with MapReduce
+This example shows how to find the maximum value of a single variable in a data set using mapreduce. It demonstrates the simplest use of mapreduce since there is only one key and minimal computation.
+
+Prepare Data
+Create a datastore using the airlinesmall.csv data set. This 12-megabyte data set contains 29 columns of flight information for several airline carriers, including arrival and departure times. In this example, select ArrDelay (flight arrival delay) as the variable of interest.
+
+ds = tabularTextDatastore('airlinesmall.csv', 'TreatAsMissing', 'NA');
+ds.SelectedVariableNames = 'ArrDelay';
+The datastore treats 'NA' values as missing, and replaces the missing values with NaN values by default. Additionally, the SelectedVariableNames property allows you to work with only the selected variable of interest, which you can verify using preview.
+
+preview(ds)
+ans=8×1 table
+    ArrDelay
+    ________
+
+        8   
+        8   
+       21   
+       13   
+        4   
+       59   
+        3   
+       11   
+
+Run MapReduce
+The mapreduce function requires a map function and a reduce function as inputs. The mapper receives blocks of data and outputs intermediate results. The reducer reads the intermediate results and produces a final result.
+
+In this example, the mapper finds the maximum arrival delay in each block of data. The mapper then stores these maximum values as the intermediate values associated with the key 'PartialMaxArrivalDelay'.
+
+Display the map function file.
+
+function maxArrivalDelayMapper (data, info, intermKVStore)
+  partMax = max(data.ArrDelay);
+  add(intermKVStore, 'PartialMaxArrivalDelay',partMax);
+end
+The reducer receives a list of the maximum arrival delays for each block and finds the overall maximum arrival delay from the list of values. mapreduce only calls this reducer once, since the mapper only adds a single unique key. The reducer uses add to add a final key-value pair to the output.
+
+Display the reduce function file.
+
+function maxArrivalDelayReducer(intermKey, intermValIter, outKVStore)
+  % intermKey is 'PartialMaxArrivalDelay'. intermValIter is an iterator of
+  % all values that has the key 'PartialMaxArrivalDelay'.
+  maxVal = -Inf;
+  while hasnext(intermValIter)
+    maxVal = max(getnext(intermValIter), maxVal);
+  end
+  % The key-value pair added to outKVStore will become the output of mapreduce 
+  add(outKVStore,'MaxArrivalDelay',maxVal);
+end
+Use mapreduce to apply the map and reduce functions to the datastore, ds.
+
+maxDelay = mapreduce(ds, @maxArrivalDelayMapper, @maxArrivalDelayReducer);
+********************************
+*      MAPREDUCE PROGRESS      *
+********************************
+Map   0% Reduce   0%
+Map  16% Reduce   0%
+Map  32% Reduce   0%
+Map  48% Reduce   0%
+Map  65% Reduce   0%
+Map  81% Reduce   0%
+Map  97% Reduce   0%
+Map 100% Reduce   0%
+Map 100% Reduce 100%
+mapreduce returns a datastore, maxDelay, with files in the current folder.
+
+Read the final result from the output datastore, maxDelay.
+
+readall(maxDelay)
+ans=1×2 table
+            Key             Value  
+    ___________________    ________
+
+    {'MaxArrivalDelay'}    {[1014]}
+
+Local Functions
+Listed here are the map and reduce functions that mapreduce applies to the data.
+
+function maxArrivalDelayMapper (data, info, intermKVStore)
+  partMax = max(data.ArrDelay);
+  add(intermKVStore, 'PartialMaxArrivalDelay',partMax);
+end
+%--------------------------------------------------------------------
+function maxArrivalDelayReducer(intermKey, intermValIter, outKVStore)
+  % intermKey is 'PartialMaxArrivalDelay'. intermValIter is an iterator of
+  % all values that has the key 'PartialMaxArrivalDelay'.
+  maxVal = -Inf;
+  while hasnext(intermValIter)
+    maxVal = max(getnext(intermValIter), maxVal);
+  end
+  % The key-value pair added to outKVStore will become the output of mapreduce 
+  add(outKVStore,'MaxArrivalDelay',maxVal);
+end
+%--------------------------------------------------------------------
